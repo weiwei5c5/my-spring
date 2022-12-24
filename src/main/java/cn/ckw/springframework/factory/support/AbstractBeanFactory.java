@@ -14,6 +14,7 @@ import cn.ckw.springframework.factory.config.BeanDefinition;
 public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory {
 
     @Override
+<<<<<<< HEAD
     public Object getBean(String name, Object... args) throws BeansException {
         return doGetBean(name, args);
     }
@@ -34,6 +35,17 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     }
 
     protected abstract Object createBean(String name, BeanDefinition beanDefinition, Object[] args) throws BeansException;
+=======
+    public Object getBean(String name) {
+        Object bean = getSingleton(name);
+        if (bean != null) return bean;
+        
+        BeanDefinition beanDefinition = getBeanDefinition(name);
+        return createBean(name, beanDefinition);
+    }
+
+    protected abstract Object createBean(String name, BeanDefinition beanDefinition) throws BeansException;
+>>>>>>> 4a8938df55c1ded5d15b3378de2d54354808419f
 
     protected abstract BeanDefinition getBeanDefinition(String name) throws BeansException;
 
