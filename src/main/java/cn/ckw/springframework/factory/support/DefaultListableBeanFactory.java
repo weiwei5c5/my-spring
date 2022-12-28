@@ -28,8 +28,5 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
         beanDefinitionMap.put(beanName, beanDefinition);
     }
-<<<<<<< HEAD
 
-=======
->>>>>>> 4a8938df55c1ded5d15b3378de2d54354808419f
 }
