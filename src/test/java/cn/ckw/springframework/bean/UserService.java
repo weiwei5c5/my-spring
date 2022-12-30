@@ -1,17 +1,16 @@
 package cn.ckw.springframework.bean;
 
-import static org.junit.Assert.*;
-
 /**
- * 在 UserService 中注入 UserDao，这样就能体现出Bean属性的依赖
+ * 作者：DerekYRC https://github.com/DerekYRC/mini-spring
  */
 public class UserService {
+
     private String uId;
 
     private UserDao userDao;
 
-    public void queryUserInfo() {
-        System.out.println("查询用户信息：" + userDao.queryUserName(uId));
+    public String queryUserInfo() {
+        return userDao.queryUserName(uId);
     }
 
     public String getuId() {

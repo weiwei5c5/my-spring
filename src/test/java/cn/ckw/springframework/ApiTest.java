@@ -2,25 +2,24 @@ package cn.ckw.springframework;
 
 import cn.ckw.springframework.bean.UserDao;
 import cn.ckw.springframework.bean.UserService;
-import cn.ckw.springframework.factory.BeanFactory;
-import cn.ckw.springframework.factory.PropertyValue;
-import cn.ckw.springframework.factory.PropertyValues;
-import cn.ckw.springframework.factory.config.BeanDefinition;
-import cn.ckw.springframework.factory.config.BeanReference;
-import cn.ckw.springframework.factory.support.DefaultListableBeanFactory;
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.NoOp;
+import cn.ckw.springframework.beans.PropertyValue;
+import cn.ckw.springframework.beans.PropertyValues;
+import cn.ckw.springframework.beans.factory.config.BeanDefinition;
+import cn.ckw.springframework.beans.factory.config.BeanReference;
+import cn.ckw.springframework.beans.factory.support.DefaultListableBeanFactory;
+import cn.ckw.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import cn.ckw.springframework.core.io.DefaultResourceLoader;
+import cn.ckw.springframework.core.io.Resource;
+
+import cn.hutool.core.io.IoUtil;
+import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * @author Chenkunwei
- * @version 1.0.0
- * @ClassName ApiTest.java
- * @Description
- * @createTime 2022年12月22日 16:34:00
+ * 作者：DerekYRC https://github.com/DerekYRC/mini-spring
  */
 public class ApiTest {
 
@@ -32,19 +31,64 @@ public class ApiTest {
         // 2. UserDao 注册
         beanFactory.registerBeanDefinition("userDao", new BeanDefinition(UserDao.class));
 
-        // 3. UserService 设置熟悉感【uId，userDao】
+        // 3. UserService 设置属性[uId、userDao]
         PropertyValues propertyValues = new PropertyValues();
         propertyValues.addPropertyValue(new PropertyValue("uId", "10001"));
         propertyValues.addPropertyValue(new PropertyValue("userDao", new BeanReference("userDao")));
 
-        // 4. UserService 注入 bean
+        // 4. UserService 注入bean
         BeanDefinition beanDefinition = new BeanDefinition(UserService.class, propertyValues);
-        beanFactory.registerBeanDefinition("userService",beanDefinition);
+        beanFactory.registerBeanDefinition("userService", beanDefinition);
 
         // 5. UserService 获取bean
         UserService userService = (UserService) beanFactory.getBean("userService");
         userService.queryUserInfo();
+    }
 
+    private DefaultResourceLoader resourceLoader;
+
+    @Before
+    public void init() {
+        resourceLoader = new DefaultResourceLoader();
+    }
+
+    @Test
+    public void test_classpath() throws IOException {
+        Resource resource = resourceLoader.getResource("classpath:important.properties");
+        InputStream inputStream = resource.getInputStream();
+        String content = IoUtil.readUtf8(inputStream);
+        System.out.println(content);
+    }
+
+    @Test
+    public void test_file() throws IOException {
+        Resource resource = resourceLoader.getResource("D://Files//IdeaProject//my-spring//src//main//resources//important.properties");
+        InputStream inputStream = resource.getInputStream();
+        String content = IoUtil.readUtf8(inputStream);
+        System.out.println(content);
+    }
+
+    @Test
+    public void test_url() throws IOException {
+        Resource resource = resourceLoader.getResource("https://github.com/fuzhengwei/small-spring/important.properties");
+        InputStream inputStream = resource.getInputStream();
+        String content = IoUtil.readUtf8(inputStream);
+        System.out.println(content);
+    }
+
+    @Test
+    public void test_xml() {
+        // 1.初始化 BeanFactory
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+
+        // 2. 读取配置文件&注册Bean
+        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
+        reader.loadBeanDefinitions("classpath:spring.xml");
+
+        // 3. 获取Bean对象调用方法
+        UserService userService = (UserService)beanFactory.getBean("userService", UserService.class);
+        String result = userService.queryUserInfo();
+        System.out.println("测试结果：" + result);
     }
 
 }
