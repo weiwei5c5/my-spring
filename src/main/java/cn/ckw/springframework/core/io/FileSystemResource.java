@@ -16,7 +16,7 @@ public class FileSystemResource implements Resource{
 
     private final File file;
 
-    private final String  path;
+    private final String path;
 
     public FileSystemResource(File file) {
         this.file = file;
