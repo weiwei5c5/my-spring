@@ -14,8 +14,11 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableA
 
     @Override
     protected void loadBeanDefinition(DefaultListableBeanFactory beanFactory) {
+<<<<<<< HEAD
         // AbstractXmlApplicationContext 调用 XmlBeanDefinitionReader进行BeanFactory进行xml资源加载
         // ApplicationContext 是继承了 DefaultResourceLoader ， 所以是让他进行资源解析工作
+=======
+>>>>>>> 53db0c1b1648b9c586f041b227ba1bcdf68d74f7
         XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(beanFactory, this);
         String[] configLocations =  getConfigLocations();
         if (null != configLocations){

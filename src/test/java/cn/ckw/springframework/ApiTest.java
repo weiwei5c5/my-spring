@@ -39,12 +39,21 @@ public class ApiTest {
         reader.loadBeanDefinitions("classpath:spring.xml");
 
         // 3. BeanDefinition 加载完成 & Bean实例化之前 修改BeanDefinition的属性值
+<<<<<<< HEAD
         MyBeanFactoryPostProcessor beanFactoryPostProcessor = new MyBeanFactoryPostProcessor();
         beanFactoryPostProcessor.postProcessBeanFactory(beanFactory);
 
         // 4. Bean实例化之后 修改BeanDefinition的属性值
         MyBeanPostProcessor beanPostProcessor = new MyBeanPostProcessor();
         beanFactory.addBeanPostProcessor(beanPostProcessor);
+=======
+//        MyBeanFactoryPostProcessor beanFactoryPostProcessor = new MyBeanFactoryPostProcessor();
+//        beanFactoryPostProcessor.postProcessBeanFactory(beanFactory);
+
+        // 4. Bean实例化之后 修改BeanDefinition的属性值
+//        MyBeanPostProcessor beanPostProcessor = new MyBeanPostProcessor();
+//        beanFactory.addBeanPostProcessor(beanPostProcessor);
+>>>>>>> 53db0c1b1648b9c586f041b227ba1bcdf68d74f7
 
         // 5. 获取Bean的对象调用方法
         UserService userService = beanFactory.getBean("userService", UserService.class);
