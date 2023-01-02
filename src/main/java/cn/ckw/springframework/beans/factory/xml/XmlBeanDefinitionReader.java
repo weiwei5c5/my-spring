@@ -67,7 +67,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             loadBeanDefinitions(location);
         }
     }
-
+    //doLoadBeanDefinitions中增加对init-method、destroy-method的读取
     protected void doLoadBeanDefinitions(InputStream inputStream) throws ClassNotFoundException{
         Document doc = XmlUtil.readXML(inputStream);
         Element root = doc.getDocumentElement();
@@ -85,6 +85,10 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
             String name = bean.getAttribute("name");
             String className = bean.getAttribute("class");
 
+            //增加对init-method、destroy-method的读取
+            String initMethod = bean.getAttribute("init-method");
+            String destroyMethodName = bean.getAttribute("destroy-method");
+
             // 获取Class，方便获取类中的名称
             Class<?> clazz = Class.forName(className);
 
@@ -96,6 +100,11 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
             // 定义 Bean
             BeanDefinition beanDefinition = new BeanDefinition(clazz);
+
+            //额外设置到beanDefinition中
+            beanDefinition.setInitMethodName(initMethod);
+            beanDefinition.setDestroyMethodName(destroyMethodName);
+
             // 去读属性并填充
             for (int j = 0; j < bean.getChildNodes().getLength(); j++) {
                 if (!(bean.getChildNodes().item(j) instanceof Element)) continue;

@@ -7,6 +7,8 @@ import cn.ckw.springframework.beans.factory.HierarchicalBeanFactory;
  * facilities to configure a bean factory, in addition to the bean factory
  * client methods in the {@link cn.ckw.springframework.beans.factory.BeanFactory}
  * interface.
+ *
+ * 提供配置，在它这里加入BeanPostProcessor
  */
 public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, SingletonBeanRegistry{
 

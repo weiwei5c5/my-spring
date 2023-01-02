@@ -6,6 +6,7 @@ import java.util.Map;
 
 /**
  * 其实现类拥有获取Bean的能力
+ * 提供获取Bean和BeanDefinitionName的集合
  */
 public interface ListableBeanFactory extends BeanFactory{
 

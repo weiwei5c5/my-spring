@@ -28,10 +28,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
         // 2. 获取 BeanFactory
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 
-        // 3. 在 Bean实例化之前，执行 BeanFactoryPostProcessor (Invoke factory processors registered as beans in the context.)
+        // 3. 在 Bean实例化之前，执行BeanFactoryPostProcessor (Invoke factory processors registered as beans in the context.)
         invokeBeanFactoryPostProcessors(beanFactory);
 
-        // 4. BeanPostProcessor 需要提前于其他 Bean 对象实例化之前执行注册操作
+        // 4. 注册：BeanPostProcessor 需要提前于其他 Bean 对象实例化之前执行注册操作
         registerBeanPostProcessors(beanFactory);
 
         // 5，提前实例化单例Bean对象
@@ -82,4 +82,14 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
         return getBeanFactory().getBean(name, requiredType);
     }
 
+    @Override
+    public void registerShutdownHook() {
+        //  在JVM销毁前执行的一个线程
+        Runtime.getRuntime().addShutdownHook(new Thread(this::close));
+    }
+
+    @Override
+    public void close() {
+        getBeanFactory().destroySingletons();
+    }
 }

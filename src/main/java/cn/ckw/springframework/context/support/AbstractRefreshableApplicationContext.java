@@ -8,7 +8,7 @@ import cn.ckw.springframework.beans.factory.support.DefaultListableBeanFactory;
  * @author Chenkunwei
  * @version 1.0.0
  * @ClassName AbstractRefreshableApplicationContext.java
- * @Description 获取 Bean 工厂和加载资源
+ * @Description 获取 Bean 工厂和加载资源 进行DefaultListableBeanFactory的创建
  * @createTime 2022年12月30日 20:46:00
  */
 public abstract class AbstractRefreshableApplicationContext extends AbstractApplicationContext {
