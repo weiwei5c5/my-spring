@@ -3,8 +3,7 @@ package cn.ckw.springframework.beans.factory.support;
 import cn.ckw.springframework.beans.BeansException;
 import cn.ckw.springframework.beans.PropertyValue;
 import cn.ckw.springframework.beans.PropertyValues;
-import cn.ckw.springframework.beans.factory.DisposableBean;
-import cn.ckw.springframework.beans.factory.InitializingBean;
+import cn.ckw.springframework.beans.factory.*;
 import cn.ckw.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import cn.ckw.springframework.beans.factory.config.BeanDefinition;
 import cn.ckw.springframework.beans.factory.config.BeanPostProcessor;
@@ -98,7 +97,27 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         this.instantiationStrategy = instantiationStrategy;
     }
 
+    /**
+     *
+     * @param beanName
+     * @param bean
+     * @param beanDefinition
+     * @return
+     */
     private Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
+        // invokeAwareMethods
+        if (bean instanceof Aware) {
+            if (bean instanceof BeanFactoryAware) {
+                ((BeanFactoryAware)bean).setBeanFactory(this);
+            }
+            if (bean instanceof BeanClassLoaderAware) {
+                ((BeanClassLoaderAware)bean).setBeanClassLoader(getBeanClassLoader());
+            }
+            if (bean instanceof BeanNameAware) {
+                ((BeanNameAware)bean).setBeanName(beanName);
+            }
+        }
+
         // 1. 执行 BeanPostProcessor Before 处理
         Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
         // 执行 Bean 对象的初始化方法
