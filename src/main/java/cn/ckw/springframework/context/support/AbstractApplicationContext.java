@@ -4,7 +4,6 @@ import cn.ckw.springframework.beans.BeansException;
 import cn.ckw.springframework.beans.factory.ConfigurableListableBeanFactory;
 import cn.ckw.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import cn.ckw.springframework.beans.factory.config.BeanPostProcessor;
-import cn.ckw.springframework.beans.factory.config.ConfigurableBeanFactory;
 import cn.ckw.springframework.context.ApplicationEvent;
 import cn.ckw.springframework.context.ApplicationListener;
 import cn.ckw.springframework.context.ConfigurableApplicationContext;

@@ -1,15 +1,21 @@
 package cn.ckw.springframework;
 
+import cn.ckw.springframework.aop.AdvisedSupport;
+import cn.ckw.springframework.aop.MethodMatcher;
+import cn.ckw.springframework.aop.TargetSource;
+import cn.ckw.springframework.aop.aspectj.AspectJExpressionPointcut;
+import cn.ckw.springframework.aop.framework.Cglib2AopProxy;
+import cn.ckw.springframework.aop.framework.JdkDynamicAopProxy;
+import cn.ckw.springframework.aop.framework.ReflectiveMethodInvocation;
+import cn.ckw.springframework.bean.IUserService;
 import cn.ckw.springframework.bean.UserService;
-import cn.ckw.springframework.beans.factory.support.DefaultListableBeanFactory;
-import cn.ckw.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import cn.ckw.springframework.common.MyBeanFactoryPostProcessor;
-import cn.ckw.springframework.common.MyBeanPostProcessor;
-import cn.ckw.springframework.context.support.ClassPathXmlApplicationContext;
-
-import cn.ckw.springframework.event.CustomEvent;
+import cn.ckw.springframework.bean.UserServiceInterceptor;
+import org.aopalliance.intercept.MethodInterceptor;
 import org.junit.Test;
-import org.openjdk.jol.info.ClassLayout;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 /**
  * 作者：DerekYRC https://github.com/DerekYRC/mini-spring
@@ -17,41 +23,80 @@ import org.openjdk.jol.info.ClassLayout;
 public class ApiTest {
 
     @Test
-    public void test_prototype() {
-        // 1.初始化 BeanFactory
-        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
-        applicationContext.registerShutdownHook();
+    public void test_aop() throws NoSuchMethodException {
+        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut("execution(* cn.ckw.springframework.bean.UserService.*(..))");
 
-        // 2. 获取Bean对象调用方法
-        UserService userService01 = applicationContext.getBean("userService", UserService.class);
-        UserService userService02 = applicationContext.getBean("userService", UserService.class);
+        Class<UserService> clazz = UserService.class;
+        Method method = clazz.getDeclaredMethod("queryUserInfo");
 
-        // 3. 配置 scope="prototype/singleton"
-        System.out.println(userService01);
-        System.out.println(userService02);
-
-        // 4. 打印十六进制哈希
-        System.out.println(userService01 + " 十六进制哈希：" + Integer.toHexString(userService01.hashCode()));
-        System.out.println(ClassLayout.parseInstance(userService01).toPrintable());
+        System.out.println(pointcut.matches(clazz));
+        System.out.println(pointcut.matches(method, clazz));
     }
 
     @Test
-    public void test_factory_bean() {
-        // 1.初始化 BeanFactory
-        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
-        applicationContext.registerShutdownHook();
-        // 2. 调用代理方法
-        UserService userService = applicationContext.getBean("userService", UserService.class);
-        System.out.println("测试结果：" + userService.queryUserInfo());
+    public void test_dynamic() {
+        // 目标对象
+        IUserService userService = new UserService();
+        // 组装代理信息
+        AdvisedSupport advisedSupport = new AdvisedSupport();
+        advisedSupport.setTargetSource(new TargetSource(userService));
+        advisedSupport.setMethodInterceptor(new UserServiceInterceptor());
+        advisedSupport.setMethodMatcher(new AspectJExpressionPointcut("execution(* cn.ckw.springframework.bean.IUserService.*(..))"));
+
+        // 代理对象(JdkDynamicAopProxy)
+        IUserService proxy_jdk = (IUserService) new JdkDynamicAopProxy(advisedSupport).getProxy();
+        // 测试调用
+        System.out.println("测试结果：" + proxy_jdk.queryUserInfo());
+
+        // 代理对象(Cglib2AopProxy)
+        IUserService proxy_cglib = (IUserService) new Cglib2AopProxy(advisedSupport).getProxy();
+        // 测试调用
+        System.out.println("测试结果：" + proxy_cglib.register("花花"));
     }
 
     @Test
-    public void test_event(){
-        // 1.初始化 BeanFactory
-        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
-        applicationContext.publishEvent(new CustomEvent(applicationContext, 1019129009086763L, "成功了！"));
+    public void test_proxy_class() {
+        IUserService userService = (IUserService) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class[]{IUserService.class}, (proxy, method, args) -> "你被代理了！");
+        String result = userService.queryUserInfo();
+        System.out.println("测试结果：" + result);
 
-        applicationContext.registerShutdownHook();
+    }
+
+    @Test
+    public void test_proxy_method() {
+        // 目标对象(可以替换成任何的目标对象)
+        Object targetObj = new UserService();
+
+        // AOP 代理
+        IUserService proxy = (IUserService) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), targetObj.getClass().getInterfaces(), new InvocationHandler() {
+            // 方法匹配器
+            MethodMatcher methodMatcher = new AspectJExpressionPointcut("execution(* cn.ckw.springframework.bean.IUserService.*(..))");
+
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                if (methodMatcher.matches(method, targetObj.getClass())) {
+                    // 方法拦截器
+                    MethodInterceptor methodInterceptor = invocation -> {
+                        long start = System.currentTimeMillis();
+                        try {
+                            return invocation.proceed();
+                        } finally {
+                            System.out.println("监控 - Begin By AOP");
+                            System.out.println("方法名称：" + invocation.getMethod().getName());
+                            System.out.println("方法耗时：" + (System.currentTimeMillis() - start) + "ms");
+                            System.out.println("监控 - End\r\n");
+                        }
+                    };
+                    // 反射调用
+                    return methodInterceptor.invoke(new ReflectiveMethodInvocation(targetObj, method, args));
+                }
+                return method.invoke(targetObj, args);
+            }
+        });
+
+        String result = proxy.queryUserInfo();
+        System.out.println("测试结果：" + result);
+
     }
 
 }

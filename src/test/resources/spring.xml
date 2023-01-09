@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans>
 
-    <bean id="proxyUserDao" class="cn.ckw.springframework.bean.ProxyBeanFactory" />
-
-    <bean id="userService" class="cn.ckw.springframework.bean.UserService" scope="prototype">
+    <bean id="userService" class="cn.ckw.springframework.bean.UserService" >
         <property name="uId" value="10001"/>
         <property name="company" value="腾讯"/>
         <property name="location" value="深圳"/>
         <property name="userDao" ref="proxyUserDao"/>
     </bean>
 
-    <bean class="cn.ckw.springframework.event.ContextRefreshedEventListener"/>
-
-    <bean class="cn.ckw.springframework.event.CustomEventListener"/>
-
-    <bean class="cn.ckw.springframework.event.ContextClosedEventListener"/>
 
 </beans>
