@@ -7,9 +7,10 @@ import cn.ckw.springframework.aop.aspectj.AspectJExpressionPointcut;
 import cn.ckw.springframework.aop.framework.Cglib2AopProxy;
 import cn.ckw.springframework.aop.framework.JdkDynamicAopProxy;
 import cn.ckw.springframework.aop.framework.ReflectiveMethodInvocation;
-import cn.ckw.springframework.bean.IUserService;
-import cn.ckw.springframework.bean.UserService;
-import cn.ckw.springframework.bean.UserServiceInterceptor;
+import cn.ckw.springframework.test.bean.IUserService;
+import cn.ckw.springframework.test.bean.UserService;
+import cn.ckw.springframework.test.bean.UserServiceInterceptor;
+import cn.ckw.springframework.context.support.ClassPathXmlApplicationContext;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.junit.Test;
 
@@ -23,14 +24,11 @@ import java.lang.reflect.Proxy;
 public class ApiTest {
 
     @Test
-    public void test_aop() throws NoSuchMethodException {
-        AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut("execution(* cn.ckw.springframework.bean.UserService.*(..))");
+    public void test_aop() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring.xml");
 
-        Class<UserService> clazz = UserService.class;
-        Method method = clazz.getDeclaredMethod("queryUserInfo");
-
-        System.out.println(pointcut.matches(clazz));
-        System.out.println(pointcut.matches(method, clazz));
+        IUserService userService = applicationContext.getBean("userService", IUserService.class);
+        System.out.println("测试结果：" + userService.queryUserInfo());
     }
 
     @Test
@@ -98,5 +96,7 @@ public class ApiTest {
         System.out.println("测试结果：" + result);
 
     }
+
+
 
 }

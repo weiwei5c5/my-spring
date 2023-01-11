@@ -11,7 +11,7 @@ import java.lang.reflect.Proxy;
  * @author Chenkunwei
  * @version 1.0.0
  * @ClassName JdkDynamicAopProxy.java
- * @Description
+ * @Description JDK动态代理实现
  * @createTime 2023年01月08日 22:02:00
  */
 public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {

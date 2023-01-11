@@ -1,4 +1,4 @@
-package cn.ckw.springframework.event;
+package cn.ckw.springframework.test.event;
 
 import cn.ckw.springframework.context.event.ApplicationContextEvent;
 

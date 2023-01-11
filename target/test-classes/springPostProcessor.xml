@@ -3,7 +3,7 @@
 
     <bean id="userDao" class="cn.ckw.springframework.bean.UserDao"/>
 
-    <bean id="userService" class="cn.ckw.springframework.bean.UserService">
+    <bean id="userService" class="cn.ckw.springframework.test.bean.UserService">
         <property name="uId" value="10001"/>
         <property name="company" value="腾讯"/>
         <property name="location" value="深圳"/>

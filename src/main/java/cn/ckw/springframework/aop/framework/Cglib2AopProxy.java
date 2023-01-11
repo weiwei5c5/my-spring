@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
  * @author Chenkunwei
  * @version 1.0.0
  * @ClassName Cglib2AopProxy.java
- * @Description
+ * @Description Cglib动态代理实现
  * @createTime 2023年01月08日 22:16:00
  */
 public class Cglib2AopProxy implements AopProxy{

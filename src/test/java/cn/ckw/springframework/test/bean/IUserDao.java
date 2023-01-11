@@ -1,4 +1,4 @@
-package cn.ckw.springframework.bean;
+package cn.ckw.springframework.test.bean;
 
 public interface IUserDao {
 

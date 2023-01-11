@@ -1,4 +1,4 @@
-package cn.ckw.springframework.bean;
+package cn.ckw.springframework.test.bean;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
