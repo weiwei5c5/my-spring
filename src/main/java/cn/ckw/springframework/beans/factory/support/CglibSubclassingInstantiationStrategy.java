@@ -15,6 +15,14 @@ import java.lang.reflect.Constructor;
  * @createTime 2022年12月23日 17:13:00
  */
 public class CglibSubclassingInstantiationStrategy implements InstantiationStrategy{
+
+    /**
+     * 这两种方式中
+     * 的 CGlib 创建对象，会影响到很多地方用于接口获取的操作，因为 CGlib 创建对
+     * 象走的是 ASM 字节码生成的操作，所以和普通的 JDK 代理生成对象是不一样，
+     * 需要注意
+     */
+
     @Override
     public Object instantiate(BeanDefinition beanDefinition, String beanName, Constructor ctor, Object[] args) throws BeansException {
         Enhancer enhancer = new Enhancer();

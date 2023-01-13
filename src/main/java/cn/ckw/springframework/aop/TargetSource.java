@@ -24,7 +24,6 @@ public class TargetSource {
         this.target = target;
     }
 
-
     /**
      * Return the type of targets returned by this {@link TargetSource}.
      * <p>Can return <code>null</code>, although certain usages of a
